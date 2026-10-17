@@ -1,21 +1,24 @@
 package org.example.data;
 
+import org.example.collections.MyList;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
+//Обертка над коллекцией книг
 public class Shelf {
-    private List<Book> shelf;
+    private MyList<Book> shelf;
 
     public Shelf() {
-        shelf = new ArrayList<>();
+        this.shelf = new MyList<>();
     }
 
     public Shelf(List<Book> books) {
-        this.shelf = books;
+        this.shelf = new MyList<>(books);
     }
 
     public List<Book> getShelf() {
-        return shelf;
+        return shelf.toList();
     }
 
     public void addBook(Book book) {
@@ -23,7 +26,7 @@ public class Shelf {
     }
 
     public boolean authorExists(String author){
-        for(Book book : shelf){
+        for(Book book : shelf.toList()){
             if (book.getAuthor().equals(author)){
                 return true;
             }
@@ -39,7 +42,7 @@ public class Shelf {
     public List<String> getTopGendersByAuthor(String author){
         if (!authorExists(author)) return List.of();
 
-        var tmp = shelf.stream()
+        var tmp = shelf.toList().stream()
                 .filter(e -> e.getAuthor().equals(author))
                 .flatMap(e -> e.getGender().stream())
                 .collect(Collectors.groupingBy(e -> e, Collectors.counting()));
@@ -56,7 +59,7 @@ public class Shelf {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Book book : shelf){
+        for (Book book : shelf.toList()){
             stringBuilder.append(book + "\n");
         }
         return stringBuilder.toString();

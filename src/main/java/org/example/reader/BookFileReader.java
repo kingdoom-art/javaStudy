@@ -15,6 +15,12 @@ import java.util.List;
  */
 public class BookFileReader {
 
+    /**
+     * Чтение данных из файла по переданному пути.
+     * Ошибочные строки завернуты в возвращаемый результат, не нам с ними разбираться
+     * @param filePath путь до файла
+     * @return результат чтения файла
+     */
     public ReadResult read(String filePath) throws IOException {
         List<Book> books = new ArrayList<>();
         List<String> errors = new ArrayList<>();
@@ -43,6 +49,8 @@ public class BookFileReader {
 
     /**
      * Разбирает одну строку файла в объект Book.
+     * Провиди валидации выходных данных
+     * IllegalArgumentException при ошибке обработки данных
      */
     private Book parseLine(String line) {
         String[] parts = line.split(";");
@@ -73,6 +81,7 @@ public class BookFileReader {
         return new Book(name, author, genders);
     }
 
+    //Класс - обертка чтения данных, чтобы возвращать еще и ошибочные строки
     public static class ReadResult {
         private final List<Book> books;
         private final List<String> errors;

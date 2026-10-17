@@ -1,9 +1,6 @@
 package org.example.collections;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
+import java.util.*;
 
 public class MyList<T>{
 
@@ -59,10 +56,18 @@ public class MyList<T>{
     }
 
     public boolean isEmpty() {
-        return size() > 0;
+        return size() == 0;
     }
 
     public boolean add(T o) {
+        /*
+            Добавление элемента в не пустую коллекцию:
+            - добавляем указатель у текущего последнего элемента на новый
+            - новый элемент ссылаем на текущий последний
+            - устанавливаем новый элемент "хвостовым"
+
+            Пустая коолекция требует установки ссылки для головы и хвоста.
+         */
         if (tail != null) {
             Node tmp = new Node<>(o);
             tail.setNext(tmp);
@@ -86,6 +91,7 @@ public class MyList<T>{
         return true;
     }
 
+    //вспомогоательный метод поиска элемента
     private Node<T> getNode(int index) {
         Node<T> tmp = head;
         for (int i = 0; i < size; i++){
@@ -99,6 +105,7 @@ public class MyList<T>{
 
     public T get(int index) {
         Node<T> tmp = getNode(index);
+        //убегаем от НПЕ
         if (tmp != null){
             return tmp.getValue();
         }
@@ -107,12 +114,17 @@ public class MyList<T>{
     }
 
     public T remove(int index) {
+        //Изем элемент для удаления
         Node<T> cur = getNode(index);
         if (cur != null) {
             Node<T> prev = cur.getPrev();
             Node<T> next = cur.getNext();
 
-            if (prev != null && next != null){
+            /*
+                Есть несколько вариантов удаления элемента,
+                кждый требует разного подхода очиски и смещения указателей
+             */
+            if (prev != null && next != null){ //удаляем из середины (рядом с удаляемым есть другие ноды)
                 prev.setNext(next);
                 next.setPrev(prev);
             } else if (prev == null && next != null) { //удаление первого элемента из списка
@@ -133,6 +145,21 @@ public class MyList<T>{
         return null;
     }
 
+    public List<T> toList(){
+        if (size() == 0) {
+            return List.of();
+        }
+
+        List<T> result = new ArrayList<>(size);
+        Node<T> cur = head;
+        while(cur != null){
+            result.add(cur.getValue());
+            cur = cur.getNext();
+        }
+
+        return result;
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -142,7 +169,7 @@ public class MyList<T>{
         while(cur != null){
             stringBuilder.append(cur.getValue());
             cur = cur.getNext();
-            if (cur != null){
+            if (cur != null){ //для последнего пропускаем запятую
                 stringBuilder.append(", ");
             }
         }
